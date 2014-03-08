@@ -3,7 +3,7 @@
   <UsingTask AssemblyFile="$(MSBuildProjectDirectory)\..\packages\MSBuild.Extension.Pack.1.3.0\tools\net40\MSBuild.ExtensionPack.dll" TaskName="MSBuild.ExtensionPack.FileSystem.File" />
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
-    <Name>FsUnitTest1</Name>
+    <Name>Tests</Name>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>

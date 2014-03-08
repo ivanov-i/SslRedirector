@@ -5,8 +5,6 @@ VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SslRedirector", "SslRedirector\SslRedirector.fsproj", "{3D57A8C7-0920-48D7-A828-ED690C24FE3D}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsUnitTest1", "FsUnitTest1\FsUnitTest1.fsproj", "{42AA8D69-8190-4377-8587-A018ECB3E086}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E61F8E0C-D3FF-4E47-ADBC-FBB337582A16}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
@@ -14,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E61F8E
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Tests", "Tests\Tests.fsproj", "{42AA8D69-8190-4377-8587-A018ECB3E086}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
