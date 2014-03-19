@@ -14,11 +14,13 @@ type ServerTest() =
     let SocketCreator = fun _ _ _->
         null 
     let Binder = fun _ _ -> ()
+    let Listener = fun _ _ -> ()
 
     let dummyNetworkFunctions = {
         SslRedirectorServer.createEndPoint = EndPointCreator
         SslRedirectorServer.createSocket = SocketCreator
         SslRedirectorServer.bind = Binder
+        SslRedirectorServer.listen = Listener
     }
 
     let setEndPointCreator f =
@@ -27,6 +29,8 @@ type ServerTest() =
         {dummyNetworkFunctions with SslRedirectorServer.createSocket = f}
     let setBinder f =
         {dummyNetworkFunctions with SslRedirectorServer.bind = f}
+    let setListener f =
+        {dummyNetworkFunctions with SslRedirectorServer.listen = f}
  
 
     [<TestMethod>]
@@ -70,6 +74,15 @@ type ServerTest() =
 
 
     [<TestMethod>]
-//    [<ExpectedException(typeof<Exception>)>]
+    [<ExpectedException(typeof<Exception>)>]
     member x.BindCalled () =
+        let binder = fun _ _ -> failwith "this is expected"
+        let dummyNetworkFunctions = setBinder binder
+        SslRedirectorServer.Start 0L 0 dummyNetworkFunctions |> ignore
+
+    [<TestMethod>]
+    [<ExpectedException(typeof<Exception>)>]
+    member x.ListenCalled () =
+        let listener = fun _ -> failwith "listen called"
+        let dummyNetworkFunctions = setListener listener
         SslRedirectorServer.Start 0L 0 dummyNetworkFunctions |> ignore
