@@ -59,9 +59,16 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UnitTest.fs" />
+    <Compile Include="ServerTest.fs" />
     <None Include="App.config" />
     <None Include="MSTest.runsettings" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SslRedirector\SslRedirector.fsproj">
+      <Name>SslRedirector</Name>
+      <Project>{3d57a8c7-0920-48d7-a828-ed690c24fe3d}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '11.0'">

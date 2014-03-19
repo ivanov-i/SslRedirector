@@ -1,5 +1,8 @@
-﻿// Learn more about F# at http://fsharp.net
-// See the 'F# Tutorial' project for more help.
+﻿module SslRedirector
+
+open System
+
+let ep = fun (a:Int64) b -> System.Net.IPEndPoint(a, b)
 
 [<EntryPoint>]
 let main argv = 
