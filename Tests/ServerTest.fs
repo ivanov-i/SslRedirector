@@ -15,6 +15,7 @@ type ServerTest() =
         null 
     let Binder = fun _ _ -> ()
     let Listener = fun _ _ -> ()
+    let Acceptor = fun _ -> async { return null }
 
     let dummyAddr = System.Net.IPAddress.Parse "127.0.0.1"
 
@@ -23,6 +24,7 @@ type ServerTest() =
         SslRedirectorServer.createSocket = SocketCreator
         SslRedirectorServer.bind = Binder
         SslRedirectorServer.listen = Listener
+        SslRedirectorServer.asyncAccept = Acceptor
     }
 
     let setEndPointCreator f =
@@ -33,7 +35,10 @@ type ServerTest() =
         {dummyNetworkFunctions with SslRedirectorServer.bind = f}
     let setListener f =
         {dummyNetworkFunctions with SslRedirectorServer.listen = f}
+    let setAcceptor f =
+        {dummyNetworkFunctions with SslRedirectorServer.asyncAccept = f}
  
+    let dummyAcceptLoop = fun _ -> async{ return ()}
 
     [<TestMethod>]
     [<ExpectedException(typeof<Exception>)>]
@@ -41,7 +46,7 @@ type ServerTest() =
         let EndPointCreator =
             fun _ _ -> failwith "This is expected"
         let dummyNetworkFunctions = setEndPointCreator EndPointCreator
-        SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions |> ignore
+        SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions dummyAcceptLoop|> ignore
 
     [<TestMethod>]
     member x.CreateEndpointCorrectParamsCalled () =
@@ -60,7 +65,7 @@ type ServerTest() =
         let EndPointCreator =
             fun _ _ -> raise (new ArgumentOutOfRangeException())
         let dummyNetworkFunctions = setEndPointCreator EndPointCreator
-        SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions |> ignore
+        SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions dummyAcceptLoop|> ignore
 
 
     [<TestMethod>]
@@ -69,7 +74,7 @@ type ServerTest() =
         let SocketCreator = fun _ _ _->
             failwith "This is expected"
         let dummyNetworkFunctions = setSocketCreator SocketCreator
-        SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions |> ignore
+        SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions dummyAcceptLoop|> ignore
         
     [<TestMethod>]
     member x.CreatesSocketWithCorrectParams () =
@@ -81,7 +86,7 @@ type ServerTest() =
                     -> null
             | _,_,_ -> failwith "Socket created with incorrect parameters"
         let dummyNetworkFunctions = setSocketCreator SocketCreator
-        SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions |> ignore
+        SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions dummyAcceptLoop|> ignore
 
     [<TestMethod>]
     [<ExpectedException(typeof<Exception>)>]
@@ -89,14 +94,14 @@ type ServerTest() =
         let SocketCreator =
             fun _ _ -> raise (new System.Net.Sockets.SocketException())
         let dummyNetworkFunctions = setSocketCreator SocketCreator
-        SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions |> ignore
+        SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions dummyAcceptLoop|> ignore
 
     [<TestMethod>]
     [<ExpectedException(typeof<Exception>)>]
     member x.BindCalled () =
         let binder = fun _ _ -> failwith "this is expected"
         let dummyNetworkFunctions = setBinder binder
-        SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions |> ignore
+        SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions dummyAcceptLoop|> ignore
 
     [<TestMethod>]
     [<ExpectedException(typeof<Exception>)>]
@@ -108,7 +113,7 @@ type ServerTest() =
         let checkExceptions = fun ex ->
             let binder = fun _ _ -> raise ex
             let dummyNetworkFunctions = setBinder binder
-            SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions |> ignore
+            SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions dummyAcceptLoop|> ignore
             
         exceptions |> List.map checkExceptions |> ignore
 
@@ -117,7 +122,7 @@ type ServerTest() =
     member x.ListenCalled () =
         let listener = fun _ -> failwith "listen called"
         let dummyNetworkFunctions = setListener listener
-        SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions |> ignore
+        SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions dummyAcceptLoop|> ignore
 
     [<TestMethod>]
     [<ExpectedException(typeof<Exception>)>]
@@ -127,6 +132,15 @@ type ServerTest() =
         let checkExceptions = fun ex ->
             let listener = fun _ _ -> raise ex
             let dummyNetworkFunctions = setListener listener
-            SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions |> ignore
+            SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions dummyAcceptLoop|> ignore
             
         exceptions |> List.map checkExceptions |> ignore
+
+    [<TestMethod>]
+    member x.AcceptLoopCalled () =
+        let AcceptLoop =
+            fun _ -> async{
+                    return ()
+                    }
+        SslRedirectorServer.Start dummyAddr 0 dummyNetworkFunctions AcceptLoop |> ignore
+
